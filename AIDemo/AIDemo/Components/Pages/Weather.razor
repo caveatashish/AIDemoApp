@@ -13,17 +13,17 @@
 }
 else
 {
-    <table class="table">
+    <table class="table weather-table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th @onclick="() => SortBy(nameof(WeatherForecast.Date))" class="sortable">Date @SortIcon(nameof(WeatherForecast.Date))</th>
+                <th @onclick="() => SortBy(nameof(WeatherForecast.TemperatureC))" class="sortable">Temp. (C) @SortIcon(nameof(WeatherForecast.TemperatureC))</th>
+                <th @onclick="() => SortBy(nameof(WeatherForecast.TemperatureF))" class="sortable">Temp. (F) @SortIcon(nameof(WeatherForecast.TemperatureF))</th>
+                <th @onclick="() => SortBy(nameof(WeatherForecast.Summary))" class="sortable">Summary @SortIcon(nameof(WeatherForecast.Summary))</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var forecast in SortedForecasts.ToList())
             {
                 <tr>
                     <td>@forecast.Date.ToShortDateString()</td>
@@ -38,6 +38,43 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+    private string? sortColumn = nameof(WeatherForecast.Date);
+    private bool sortAscending = true;
+
+    private IEnumerable<WeatherForecast> SortedForecasts =>
+        forecasts == null ? Enumerable.Empty<WeatherForecast>() :
+        sortColumn switch
+        {
+            nameof(WeatherForecast.Date) => sortAscending ? forecasts.OrderBy(f => f.Date) : forecasts.OrderByDescending(f => f.Date),
+            nameof(WeatherForecast.TemperatureC) => sortAscending ? forecasts.OrderBy(f => f.TemperatureC) : forecasts.OrderByDescending(f => f.TemperatureC),
+            nameof(WeatherForecast.TemperatureF) => sortAscending ? forecasts.OrderBy(f => f.TemperatureF) : forecasts.OrderByDescending(f => f.TemperatureF),
+            nameof(WeatherForecast.Summary) => sortAscending ? forecasts.OrderBy(f => f.Summary) : forecasts.OrderByDescending(f => f.Summary),
+            _ => forecasts
+        };
+
+    private void SortBy(string column)
+    {
+       
+        if (sortColumn == column)
+        {
+            sortAscending = !sortAscending;
+        }
+        else
+        {
+            sortColumn = column;
+            sortAscending = true;
+        }
+        StateHasChanged();
+    }
+
+    private MarkupString SortIcon(string column)
+    {
+        if (sortColumn != column)
+            return new MarkupString("");
+        var color = sortAscending ? "#27548A" : "#DDA853";
+        var arrow = sortAscending ? "&#9650;" : "&#9660;";
+        return new MarkupString($"<span style='color:{color}; font-size:1em; margin-left:0.3em;'>{arrow}</span>");
+    }
 
     protected override async Task OnInitializedAsync()
     {

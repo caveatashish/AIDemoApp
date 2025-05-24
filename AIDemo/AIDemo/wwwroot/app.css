@@ -51,3 +51,27 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #183B4E;
 }
+
+.weather-table th.sortable {
+    cursor: pointer;
+    background-color: #F3F3E0;
+    color: #27548A;
+    transition: background 0.2s, color 0.2s;
+    user-select: none;
+}
+.weather-table th.sortable:hover {
+    background-color: #DDA853;
+    color: #183B4E;
+}
+.weather-table {
+    border-color: #27548A;
+}
+.weather-table td, .weather-table th {
+    border: 1px solid #DDA853;
+}
+.weather-table tbody tr:nth-child(even) {
+    background-color: #F3F3E0;
+}
+.weather-table tbody tr:nth-child(odd) {
+    background-color: #fff;
+}
